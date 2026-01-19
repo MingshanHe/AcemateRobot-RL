@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="acemate">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="2.77555756156289E-17 -2.77555756156289E-17 0.0168040962478685"
+        rpy="0 0 0" />
+      <mass
+        value="1.570023274985373" />
+      <inertia
+        ixx="0.000938385763007501"
+        ixy="-3.71384982844971E-20"
+        ixz="5.34875721368405E-21"
+        iyy="0.000938385763007501"
+        iyz="5.13122783387801E-22"
+        izz="0.00180023084628184" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/root/IsaacLab/scripts/acemate/robot_description/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/root/IsaacLab/scripts/acemate/robot_description/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="link1">
+    <inertial>
+      <origin
+        xyz="-0.00592129872986048 2.08166817117217E-17 0.0276692540021357"
+        rpy="0 0 0" />
+      <mass
+        value="1.74030334454075" />
+      <inertia
+        ixx="0.00232667245067196"
+        ixy="-5.38698220592098E-19"
+        ixz="0.000194674057357829"
+        iyy="0.00281296369233806"
+        iyz="1.17475947813589E-19"
+        izz="0.00241375240269988" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/root/IsaacLab/scripts/acemate/robot_description/meshes/link1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/root/IsaacLab/scripts/acemate/robot_description/meshes/link1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint1"
+    type="revolute">
+    <origin
+      xyz="0 0 0.064"
+      rpy="0 0 3.1416" />
+    <parent
+      link="base_link" />
+    <child
+      link="link1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="1000"
+      velocity="1000" />
+  </joint>
+  <link
+    name="link2">
+    <inertial>
+      <origin
+        xyz="0.186201757048841 2.77555756156289E-17 -0.0362028345938581"
+        rpy="0 0 0" />
+      <mass
+        value="7.55683150566937" />
+      <inertia
+        ixx="0.0134220392746543"
+        ixy="7.13507097497623E-18"
+        ixz="0.000264553356110603"
+        iyy="0.0756183859340519"
+        iyz="2.5784433513277E-18"
+        izz="0.0704925338869315" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/root/IsaacLab/scripts/acemate/robot_description/meshes/link2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/root/IsaacLab/scripts/acemate/robot_description/meshes/link2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint2"
+    type="revolute">
+    <origin
+      xyz="-0.0385 0 0.0425"
+      rpy="0 -1.5708 0" />
+    <parent
+      link="link1" />
+    <child
+      link="link2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="1000"
+      velocity="1000" />
+  </joint>
+  <link
+    name="link3">
+    <inertial>
+      <origin
+        xyz="-0.0688359250116121 5.55111512312578E-17 -0.0271937853819001"
+        rpy="0 0 0" />
+      <mass
+        value="1.87661633923713" />
+      <inertia
+        ixx="0.00154755548857606"
+        ixy="4.61104773133398E-20"
+        ixz="9.41701614345634E-05"
+        iyy="0.00236028389317128"
+        iyz="-5.42868360949927E-19"
+        izz="0.00175907606736439" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/root/IsaacLab/scripts/acemate/robot_description/meshes/link3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/root/IsaacLab/scripts/acemate/robot_description/meshes/link3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint3"
+    type="revolute">
+    <origin
+      xyz="0.35 0 -0.011"
+      rpy="0 0 -3.1416" />
+    <parent
+      link="link2" />
+    <child
+      link="link3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-2.1"
+      upper="1.5708"
+      effort="1000"
+      velocity="1000" />
+  </joint>
+  <link
+    name="link4">
+    <inertial>
+      <origin
+        xyz="0.00303201250313874 9.71445146547012E-16 0.0388423375540662"
+        rpy="0 0 0" />
+      <mass
+        value="1.60676183955997" />
+      <inertia
+        ixx="0.00101535733066218"
+        ixy="1.40733341101517E-19"
+        ixz="-5.61671604256699E-05"
+        iyy="0.00140521999335182"
+        iyz="1.4229360484558E-20"
+        izz="0.00119087910068193" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/root/IsaacLab/scripts/acemate/robot_description/meshes/link4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/root/IsaacLab/scripts/acemate/robot_description/meshes/link4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint4"
+    type="revolute">
+    <origin
+      xyz="-0.13475 0 -0.026306"
+      rpy="-1.5708 0 1.5708" />
+    <parent
+      link="link3" />
+    <child
+      link="link4" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="1000"
+      velocity="1000" />
+  </joint>
+  <link
+    name="link5">
+    <inertial>
+      <origin
+        xyz="0.00500000000966004 -4.71664585166565E-09 -0.0250737301011436"
+        rpy="0 0 0" />
+      <mass
+        value="0.285521897640887" />
+      <inertia
+        ixx="0.00209046632836553"
+        ixy="-1.58183405180216E-11"
+        ixz="3.26961776977259E-13"
+        iyy="0.00168948065025279"
+        iyz="-3.62367182524678E-11"
+        izz="0.000406839858369958" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/root/IsaacLab/scripts/acemate/robot_description/meshes/link5.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/root/IsaacLab/scripts/acemate/robot_description/meshes/link5.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint5"
+    type="revolute">
+    <origin
+      xyz="-0.31431 -0.005 0.0515"
+      rpy="-1.5708 0 1.5708" />
+    <parent
+      link="link4" />
+    <child
+      link="link5" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.1416"
+      upper="3.1416"
+      effort="1000"
+      velocity="1000" />
+  </joint>
+</robot>
