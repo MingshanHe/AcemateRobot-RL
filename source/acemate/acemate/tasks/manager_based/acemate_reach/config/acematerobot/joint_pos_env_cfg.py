@@ -90,12 +90,12 @@ class AcemateReachEnvCfg(ReachEnvCfg):
         self.scene.robot = ACEMATEROBOT_CONFIG.replace(prim_path="{ENV_REGEX_NS}/Robot")
         
         # override events
-        self.events.reset_robot_joints.params["position_range"] = (0.0, 0.1)
+        self.events.reset_robot_joints.params["position_range"] = (-0.5, 0.5)
         
         # override rewards
         self.rewards.end_effector_position_tracking.params["asset_cfg"].body_names = ["link5"]
         self.rewards.end_effector_position_tracking_fine_grained.params["asset_cfg"].body_names = ["link5"]
-        # self.rewards.end_effector_orientation_tracking.params["asset_cfg"].body_names = ["link5"]
+        self.rewards.end_effector_heading_x_axis_tracking.params["asset_cfg"].body_names = ["link5"]
         
         # override actions
         self.actions.arm_action = mdp.JointPositionActionCfg(

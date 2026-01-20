@@ -11,7 +11,7 @@ import torch
 
 from isaaclab.assets import RigidObject
 from isaaclab.managers import SceneEntityCfg
-from isaaclab.utils.math import combine_frame_transforms, quat_error_magnitude, quat_mul
+from isaaclab.utils.math import combine_frame_transforms, quat_error_magnitude, quat_mul, quat_apply
 
 if TYPE_CHECKING:
     from isaaclab.envs import ManagerBasedRLEnv
@@ -83,7 +83,7 @@ def action_rate_l2(env: ManagerBasedRLEnv) -> torch.Tensor:
     """Penalize the rate of change of the actions using L2 squared kernel."""
     return torch.sum(torch.square(env.action_manager.action - env.action_manager.prev_action), dim=1)
 
-def heading_z_axis_error(env: ManagerBasedRLEnv, command_name: str, asset_cfg: SceneEntityCfg) -> torch.Tensor:
+def heading_x_axis_error(env: ManagerBasedRLEnv, command_name: str, asset_cfg: SceneEntityCfg) -> torch.Tensor:
     # extract the asset (to enable type hinting)
     asset: RigidObject = env.scene[asset_cfg.name]
     command = env.command_manager.get_command(command_name)
@@ -92,15 +92,13 @@ def heading_z_axis_error(env: ManagerBasedRLEnv, command_name: str, asset_cfg: S
     des_quat_w = quat_mul(asset.data.root_quat_w, des_quat_b)
     curr_quat_w = asset.data.body_quat_w[:, asset_cfg.body_ids[0]]
     # extract the local z axis
-    z_axis_local = torch.tensor([0.0, 0.0, 1.0], device=env.device).repeat(curr_quat_w.shape[0], 1)
-    des_z_w = quat_apply(des_quat_w, z_axis_local)   # desired Z axis in the world frame
-    curr_z_w = quat_apply(curr_quat_w, z_axis_local) # current Z axis in the world frame
+    x_axis_local = torch.tensor([1.0, 0.0, 0.0], device=env.device).repeat(curr_quat_w.shape[0], 1)
+    des_x_w = quat_apply(des_quat_w, x_axis_local)   # desired Z axis in the world frame
+    curr_x_w = quat_apply(curr_quat_w, x_axis_local) # current Z axis in the world frame
     # calculate the angle between the two z axes
     # cos_theta = a · b / (|a|*|b|)
-    dot_product = torch.sum(des_z_w * curr_z_w, dim=1)
+    dot_product = torch.sum(des_x_w * curr_x_w, dim=1)
     # (clamp to [-1, 1])
     dot_product = torch.clamp(dot_product, -1.0, 1.0)
-    
-    # 返回弧度误差 (acos) 或者 1 - cos (更平滑，常用于奖励函数)
-    # return torch.acos(dot_product)
+
     return 1.0 - dot_product

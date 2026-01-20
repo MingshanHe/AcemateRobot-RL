@@ -78,8 +78,8 @@ class CommandsCfg:
         debug_vis=True,
         ranges=mdp.UniformPoseCommandCfg.Ranges(
             pos_x=(0.0062, 0.0062),
-            pos_y=(-0.4, -0.3),
-            pos_z=(0.4, 0.6),
+            pos_y=(-0.4, 0.4),
+            pos_z=(0.3, 0.6),
             roll=(-1.5708, -1.5708),
             pitch=(0.0, 0.0),
             yaw=(3.1415926, 3.1415926),
@@ -125,7 +125,7 @@ class EventCfg:
         func=mdp.reset_joints_by_scale,
         mode="reset",
         params={
-            "position_range": (0.5, 1.5),
+            "position_range": (-1.5, 1.5),
             "velocity_range": (0.0, 0.0),
         },
     )
@@ -145,13 +145,12 @@ class RewardsCfg:
         func=mdp.position_command_error_tanh,
         weight=0.1,
         params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "std": 0.1, "command_name": "ee_pose"},
-        # params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "command_name": "ee_pose"},
     )
-    # end_effector_orientation_tracking = RewTerm(
-    #     func=mdp.orientation_command_error,
-    #     weight=-0.1,
-    #     params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "command_name": "ee_pose"},
-    # )
+    end_effector_heading_x_axis_tracking = RewTerm(
+        func=mdp.heading_x_axis_error,
+        weight=-0.1,
+        params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "command_name": "ee_pose"},
+    )
 
     # action penalty
     action_rate = RewTerm(func=mdp.action_rate_l2, weight=-0.0001)
