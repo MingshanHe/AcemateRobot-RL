@@ -78,4 +78,29 @@ def joint_pos_target_l2(env: ManagerBasedRLEnv, target: float, asset_cfg: SceneE
     joint_pos = wrap_to_pi(asset.data.joint_pos[:, asset_cfg.joint_ids])
     # compute the reward
     return torch.sum(torch.square(joint_pos - target), dim=1)
+    
+def action_rate_l2(env: ManagerBasedRLEnv) -> torch.Tensor:
+    """Penalize the rate of change of the actions using L2 squared kernel."""
+    return torch.sum(torch.square(env.action_manager.action - env.action_manager.prev_action), dim=1)
 
+def heading_z_axis_error(env: ManagerBasedRLEnv, command_name: str, asset_cfg: SceneEntityCfg) -> torch.Tensor:
+    # extract the asset (to enable type hinting)
+    asset: RigidObject = env.scene[asset_cfg.name]
+    command = env.command_manager.get_command(command_name)
+    # obtain the desired and current orientations
+    des_quat_b = command[:, 3:7]
+    des_quat_w = quat_mul(asset.data.root_quat_w, des_quat_b)
+    curr_quat_w = asset.data.body_quat_w[:, asset_cfg.body_ids[0]]
+    # extract the local z axis
+    z_axis_local = torch.tensor([0.0, 0.0, 1.0], device=env.device).repeat(curr_quat_w.shape[0], 1)
+    des_z_w = quat_apply(des_quat_w, z_axis_local)   # desired Z axis in the world frame
+    curr_z_w = quat_apply(curr_quat_w, z_axis_local) # current Z axis in the world frame
+    # calculate the angle between the two z axes
+    # cos_theta = a · b / (|a|*|b|)
+    dot_product = torch.sum(des_z_w * curr_z_w, dim=1)
+    # (clamp to [-1, 1])
+    dot_product = torch.clamp(dot_product, -1.0, 1.0)
+    
+    # 返回弧度误差 (acos) 或者 1 - cos (更平滑，常用于奖励函数)
+    # return torch.acos(dot_product)
+    return 1.0 - dot_product

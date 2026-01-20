@@ -25,7 +25,8 @@ from isaaclab.utils import configclass
 from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR
 from isaaclab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 
-import isaaclab_tasks.manager_based.manipulation.reach.mdp as mdp
+# import isaaclab_tasks.manager_based.manipulation.reach.mdp as mdp
+import acemate.tasks.manager_based.acemate_reach.mdp as mdp
 
 ##
 # Scene definition
@@ -146,11 +147,11 @@ class RewardsCfg:
         params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "std": 0.1, "command_name": "ee_pose"},
         # params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "command_name": "ee_pose"},
     )
-    end_effector_orientation_tracking = RewTerm(
-        func=mdp.orientation_command_error,
-        weight=-0.1,
-        params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "command_name": "ee_pose"},
-    )
+    # end_effector_orientation_tracking = RewTerm(
+    #     func=mdp.orientation_command_error,
+    #     weight=-0.1,
+    #     params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "command_name": "ee_pose"},
+    # )
 
     # action penalty
     action_rate = RewTerm(func=mdp.action_rate_l2, weight=-0.0001)
