@@ -96,6 +96,7 @@ class AcemateReachEnvCfg(ReachEnvCfg):
         self.rewards.end_effector_position_tracking.params["asset_cfg"].body_names = ["link5"]
         self.rewards.end_effector_position_tracking_fine_grained.params["asset_cfg"].body_names = ["link5"]
         self.rewards.end_effector_heading_x_axis_tracking.params["asset_cfg"].body_names = ["link5"]
+        self.rewards.end_effector_heading_x_axis_velocity.params["asset_cfg"].body_names = ["link5"]
         
         # override actions
         self.actions.arm_action = mdp.JointPositionActionCfg(

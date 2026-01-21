@@ -153,13 +153,20 @@ class RewardsCfg:
     )
 
     # action penalty
+    # When using end effector velocity control, the action_rate_l2 need to be stopped.
     action_rate = RewTerm(func=mdp.action_rate_l2, weight=-0.0001)
+    
     joint_vel = RewTerm(
         func=mdp.joint_vel_l2,
         weight=-0.0001,
         params={"asset_cfg": SceneEntityCfg("robot")},
     )
 
+    end_effector_heading_x_axis_velocity = RewTerm(
+        func=mdp.x_axis_striking_velocity_reward,
+        weight=-0.1,
+        params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "command_name": "ee_pose"},
+    )
 
 @configclass
 class TerminationsCfg:

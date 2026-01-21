@@ -102,3 +102,38 @@ def heading_x_axis_error(env: ManagerBasedRLEnv, command_name: str, asset_cfg: S
     dot_product = torch.clamp(dot_product, -1.0, 1.0)
 
     return 1.0 - dot_product
+
+def x_axis_striking_velocity_reward(
+    env: ManagerBasedRLEnv, 
+    command_name: str, 
+    asset_cfg: SceneEntityCfg,
+    target_speed: float = 2.0,  # 假设目标击球速度是 2m/s
+    dist_threshold: float = 0.1 # 只有距离小于 10cm 才开始奖励速度
+) -> torch.Tensor:
+    # extract the asset (to enable type hinting)
+    asset: RigidObject = env.scene[asset_cfg.name]
+    command = env.command_manager.get_command(command_name)
+
+    # obtain the desired and current positions
+    des_pos_b = command[:, :3]
+    des_pos_w, _ = combine_frame_transforms(asset.data.root_pos_w, asset.data.root_quat_w, des_pos_b)
+    curr_pos_w = asset.data.body_pos_w[:, asset_cfg.body_ids[0]]  # type: ignore
+    distance = torch.norm(curr_pos_w - des_pos_w, dim=1)
+
+    # obtain the desired and current orientations
+    curr_quat_w = asset.data.body_quat_w[:, asset_cfg.body_ids[0]]
+    x_axis_local = torch.tensor([1.0, 0.0, 0.0], device=env.device).repeat(curr_quat_w.shape[0], 1)
+    curr_x_w = quat_apply(curr_quat_w, x_axis_local)
+
+    # obtain the  current orientations velocity
+    #    body_vel_w: [num_envs, num_bodies, 6] (前3是线速度，后3是角速度)
+    curr_vel_w = asset.data.body_vel_w[:, asset_cfg.body_ids[0], :3]
+    projected_speed = torch.sum(curr_vel_w * curr_x_w, dim=1)
+
+    vel_error = torch.abs(projected_speed - target_speed)
+    
+    r_vel = torch.exp(-vel_error / 0.5) 
+
+    is_close = (distance < dist_threshold).float()
+    
+    return is_close * r_vel
