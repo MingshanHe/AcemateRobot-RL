@@ -8,12 +8,12 @@ import math
 from isaaclab.utils import configclass
 
 import isaaclab_tasks.manager_based.manipulation.reach.mdp as mdp
-from acemate.tasks.manager_based.acemate_reach.reach_env_cfg import ReachEnvCfg
+from acemate.tasks.manager_based.tennis_bouncing.reach_env_cfg import ReachEnvCfg
 
 ##
 # Pre-defined configs
 ##
-from isaaclab_assets import KINOVA_GEN3_N7_CFG  # isort: skip
+# from isaaclab_assets import KINOVA_GEN3_N7_CFG  # isort: skip
 
 ##
 # Robot configuration
@@ -77,18 +77,56 @@ ACEMATEROBOT_CONFIG = ArticulationCfg(
 )
 
 ##
+# Tennis Ball configuration
+##
+import torch
+import isaaclab.sim as sim_utils
+from isaaclab.assets import RigidObject, RigidObjectCfg
+from isaaclab.sim import SimulationContext, SimulationCfg
+from isaaclab.scene import InteractiveScene, InteractiveSceneCfg
+BALL_CONFIGURATION = RigidObjectCfg(
+    prim_path="/World/Ball",
+    spawn=sim_utils.SphereCfg(
+        radius=0.033,  # 网球半径
+        visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.8, 0.9, 0.2)), # 网球绿
+        rigid_props=sim_utils.RigidBodyPropertiesCfg(),
+        mass_props=sim_utils.MassPropertiesCfg(mass=0.057),
+        # 关键：物理材质
+        physics_material=sim_utils.RigidBodyMaterialCfg(
+            restitution=0.85,  # 弹性系数 (0-1)，越高越弹
+            static_friction=0.5,
+            dynamic_friction=0.5,
+        ),
+        collision_props=sim_utils.CollisionPropertiesCfg(), # 启用碰撞
+    ),
+    init_state=RigidObjectCfg.InitialStateCfg(
+        pos=(0.0, 0.0, 0.8), # 初始高度 2米
+    ),
+)
+
+
+##
 # Environment configuration
 ##
 
 
 @configclass
-class AcemateReachEnvCfg(ReachEnvCfg):
+class TennisBouncingEnvCfg(ReachEnvCfg):
     def __post_init__(self):
         # post init of parent
         super().__post_init__()
 
         # switch robot to ur10
         self.scene.robot = ACEMATEROBOT_CONFIG.replace(prim_path="{ENV_REGEX_NS}/Robot")
+        self.scene.ball = BALL_CONFIGURATION.replace(prim_path="{ENV_REGEX_NS}/Ball")
+        
+        # root_state = self.scene.ball._data.default_root_state.clone()
+
+        ball = RigidObject(cfg=BALL_CONFIGURATION)
+        # root_state = ball.data.default_root_state.clone()
+        # root_state[:, 7:10] = torch.tensor([[3.0, 0.0, 0.0]], device=sim.device) # X轴初速度 5m/s
+        # ball.write_root_state_to_sim(root_state)
+        # ball.reset()
         
         # override events
         self.events.reset_robot_joints.params["position_range"] = (-0.5, 0.5)
@@ -109,7 +147,7 @@ class AcemateReachEnvCfg(ReachEnvCfg):
         # self.commands.ee_pose.ranges.pitch = (math.pi / 2, math.pi / 2)
 
 @configclass
-class AcemateReachEnvCfg_PLAY(AcemateReachEnvCfg):
+class TennisBouncingEnvCfg_PLAY(TennisBouncingEnvCfg):
     def __post_init__(self):
         # post init of parent
         super().__post_init__()
