@@ -13,7 +13,7 @@ from acemate.tasks.manager_based.acemate_reach.reach_env_cfg import ReachEnvCfg
 ##
 # Pre-defined configs
 ##
-from isaaclab_assets import KINOVA_GEN3_N7_CFG  # isort: skip
+# from isaaclab_assets import KINOVA_GEN3_N7_CFG  # isort: skip
 
 ##
 # Robot configuration
@@ -82,7 +82,7 @@ ACEMATEROBOT_CONFIG = ArticulationCfg(
 
 
 @configclass
-class AcemateReachEnvCfg(ReachEnvCfg):
+class TennisBouncingEnvCfg(ReachEnvCfg):
     def __post_init__(self):
         # post init of parent
         super().__post_init__()

@@ -7,6 +7,7 @@ from dataclasses import MISSING
 
 import isaaclab.sim as sim_utils
 from isaaclab.assets import ArticulationCfg, AssetBaseCfg
+from isaaclab.assets import RigidObject, RigidObjectCfg
 from isaaclab.devices import DevicesCfg
 from isaaclab.devices.gamepad import Se3GamepadCfg
 from isaaclab.devices.keyboard import Se3KeyboardCfg
@@ -26,7 +27,7 @@ from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR
 from isaaclab.utils.noise import AdditiveUniformNoiseCfg as Unoise
 
 # import isaaclab_tasks.manager_based.manipulation.reach.mdp as mdp
-import acemate.tasks.manager_based.acemate_reach.mdp as mdp
+import acemate.tasks.manager_based.tennis_bouncing.mdp as mdp
 
 ##
 # Scene definition
@@ -54,6 +55,8 @@ class ReachSceneCfg(InteractiveSceneCfg):
 
     # robots
     robot: ArticulationCfg = MISSING
+    # tennis ball
+    ball: RigidObjectCfg = MISSING
 
     # lights
     light = AssetBaseCfg(
@@ -130,6 +133,30 @@ class EventCfg:
         },
     )
 
+    reset_ball_position_and_velocity = EventTerm(
+            func=mdp.reset_root_state_uniform,
+            mode="reset",  # 每次环境重置时触发
+            params={
+                "asset_cfg": SceneEntityCfg("ball"), 
+                "pose_range": {
+                    "x": (-3.0, -3.0),
+                    "y": (-0.3, -0.3),
+                    "z": (0.7, 0.8),      
+                    "roll": (0.0, 0.0),
+                    "pitch": (0.0, 0.0),
+                    "yaw": (0.0, 0.0),
+                },
+                "velocity_range": {
+                    "x": (3.0, 5.0),
+                    "y": (0.0, 0.0),
+                    "z": (0.0, 0.0),
+                    "roll": (0.0, 0.0),
+                    "pitch": (0.0, 0.0),
+                    "yaw": (0.0, 0.0),
+                },
+
+            },
+        )
 
 @configclass
 class RewardsCfg:
@@ -198,7 +225,7 @@ class ReachEnvCfg(ManagerBasedRLEnvCfg):
     """Configuration for the reach end-effector pose tracking environment."""
 
     # Scene settings
-    scene: ReachSceneCfg = ReachSceneCfg(num_envs=4096, env_spacing=2)
+    scene: ReachSceneCfg = ReachSceneCfg(num_envs=2, env_spacing=5)
     # Basic settings
     observations: ObservationsCfg = ObservationsCfg()
     actions: ActionsCfg = ActionsCfg()
@@ -214,7 +241,7 @@ class ReachEnvCfg(ManagerBasedRLEnvCfg):
         # general settings
         self.decimation = 2
         self.sim.render_interval = self.decimation
-        self.episode_length_s = 12.0
+        self.episode_length_s = 2.0
         self.viewer.eye = (3.5, 3.5, 3.5)
         # simulation settings
         self.sim.dt = 1.0 / 60.0
