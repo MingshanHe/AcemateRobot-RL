@@ -137,3 +137,52 @@ def x_axis_striking_velocity_reward(
     is_close = (distance < dist_threshold).float()
     
     return is_close * r_vel
+
+
+
+
+
+
+def calculate_table_tennis_rewards(ball_data, table_params):
+    """
+    ball_data: 包含当前帧和前一帧球的状态 (pos, vel)
+    table_params: 球桌的边界坐标 [x_min, x_max, y_min, y_max]
+    """
+    reward_1 = 0.0
+    reward_2 = 0.0
+    
+    # --- Reward 1: State Transition + Landing Prediction ---
+    # 判定判定状态转换：球的速度方向是否从“靠近机器人”变为“远离机器人”
+    # 假设机器人位于 x 负半区，球向 x 正方向飞代表击球成功
+    is_hit = ball_data['prev_vel_x'] <= 0 and ball_data['curr_vel_x'] > 0
+    
+    if is_hit:
+        # 基础分 (State Transition)
+        base_bonus = 1.0
+        
+        # 预测落点分 (Landing Bonus)
+        # 使用简化的抛体运动或模型预测球最终落地的位置 (pred_x, pred_y)
+        pred_land_pos = predict_landing_point(ball_data['curr_pos'], ball_data['curr_vel'])
+        
+        # 计算预测落点与对方球桌中心或目标的距离
+        target_pos = table_params['opponent_center']
+        dist = torch.norm(pred_land_pos - target_pos)
+        
+        # 使用指数函数将距离映射到 [0, 1]
+        landing_bonus = torch.exp(-dist) 
+        
+        reward_1 = base_bonus + landing_bonus # 范围 [1, 2]
+
+    # --- Reward 2: Actual Landing Bonus ---
+    # 判定球是否真正落在对方半场（通常由仿真引擎的碰撞事件触发）
+    if ball_data['ball_has_bounced_on_table']:
+        actual_pos = ball_data['bounce_pos']
+        
+        # 检查坐标是否在对方半场边界内
+        if (table_params['x_min'] < actual_pos[0] < table_params['x_max'] and
+            table_params['y_min'] < actual_pos[1] < table_params['y_max']):
+            
+            # 可以是固定值 1.0，也可以根据离边缘的距离给分
+            reward_2 = 1.0 # 范围 [0, 1]
+            
+    return reward_1, reward_2
