@@ -113,7 +113,7 @@ class EventCfg:
         func=mdp.reset_joints_by_scale,
         mode="reset",
         params={
-            "position_range": (-1.5, 1.5),
+            "position_range": (1.0, 3.1),
             "velocity_range": (0.0, 0.0),
         },
     )
@@ -122,7 +122,7 @@ class EventCfg:
             mode="reset",  # 每次环境重置时触发
             params={
                 "asset_cfg": SceneEntityCfg("ball"), 
-                "pose_range": { "x": (-3.0, -3.0), "y": (-0.5, -0.5), "z": (0.7, 0.8),      
+                "pose_range": { "x": (-3.0, -3.0), "y": (-0.7, -0.7), "z": (0.9, 1.4),      
                                 "roll": (0.0, 0.0), "pitch": (0.0, 0.0), "yaw": (0.0, 0.0),},
                 "velocity_range": { "x": (3.0, 5.0), "y": (0.0, 0.0), "z": (0.0, 0.0),
                                     "roll": (0.0, 0.0), "pitch": (0.0, 0.0), "yaw": (0.0, 0.0),},
@@ -135,7 +135,7 @@ class RewardsCfg:
 
     # task terms
     end_ball_position_tracking = RewTerm(
-        func=mdp.distance_error
+        func=mdp.distance_error,
         weight=-0.2,
         params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING)},
     )
@@ -180,9 +180,9 @@ class TerminationsCfg:
 class CurriculumCfg:
     """Curriculum terms for the MDP."""
 
-    action_rate = CurrTerm(
-        func=mdp.modify_reward_weight, params={"term_name": "action_rate", "weight": -0.005, "num_steps": 4500}
-    )
+    # action_rate = CurrTerm(
+    #     func=mdp.modify_reward_weight, params={"term_name": "action_rate", "weight": -0.005, "num_steps": 4500}
+    # )
 
     joint_vel = CurrTerm(
         func=mdp.modify_reward_weight, params={"term_name": "joint_vel", "weight": -0.001, "num_steps": 4500}
@@ -199,7 +199,7 @@ class ReachEnvCfg(ManagerBasedRLEnvCfg):
     """Configuration for the reach end-effector pose tracking environment."""
 
     # Scene settings
-    scene: ReachSceneCfg = ReachSceneCfg(num_envs=2, env_spacing=5)
+    scene: ReachSceneCfg = ReachSceneCfg(num_envs=100, env_spacing=5)
     # Basic settings
     observations: ObservationsCfg = ObservationsCfg()
     actions: ActionsCfg = ActionsCfg()

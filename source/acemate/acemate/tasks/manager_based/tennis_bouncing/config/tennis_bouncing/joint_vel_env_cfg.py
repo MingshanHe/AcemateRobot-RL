@@ -128,7 +128,7 @@ class TennisBouncingEnvCfg(ReachEnvCfg):
         # ball.reset()
         
         # override events
-        self.events.reset_robot_joints.params["position_range"] = (-0.5, 0.5)
+        self.events.reset_robot_joints.params["position_range"] = (1.0, 2.0)
         
         # override rewards
         # self.rewards.end_effector_position_tracking.params["asset_cfg"].body_names = ["link5"]
@@ -138,7 +138,7 @@ class TennisBouncingEnvCfg(ReachEnvCfg):
         self.rewards.end_ball_position_tracking.params["asset_cfg"].body_names = ["link5"]
         # override actions
         self.actions.arm_action = mdp.JointVelocityActionCfg(
-            asset_name="robot", joint_names=["joint1","joint2","joint3","joint4","joint5"], scale=0.5, use_default_offset=True
+            asset_name="robot", joint_names=["joint1","joint2","joint3","joint4","joint5"], scale=5.0, use_default_offset=True
         )
         # override command generator body
         # end-effector is along x-direction
