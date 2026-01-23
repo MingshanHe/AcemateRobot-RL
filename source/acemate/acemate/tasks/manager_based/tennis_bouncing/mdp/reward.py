@@ -186,3 +186,19 @@ def calculate_table_tennis_rewards(ball_data, table_params):
             reward_2 = 1.0 # 范围 [0, 1]
             
     return reward_1, reward_2
+
+
+
+
+def distance_error(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg) -> torch.Tensor:
+    """Penalize tracking of the position error using L2-norm.
+
+    The function computes the position error between the desired position (from the command) and the
+    current position of the asset's body (in world frame). The position error is computed as the L2-norm
+    of the difference between the desired and current positions.
+    """
+    # extract the asset (to enable type hinting)
+    asset: RigidObject = env.scene[asset_cfg.name]
+    curr_end_pos_w = asset.data.body_pos_w[:, asset_cfg.body_ids[0]]
+    curr_ball_pos_w = env.scene["ball"].data.root_pos_w
+    return torch.norm(curr_end_pos_w - curr_ball_pos_w, dim=1)

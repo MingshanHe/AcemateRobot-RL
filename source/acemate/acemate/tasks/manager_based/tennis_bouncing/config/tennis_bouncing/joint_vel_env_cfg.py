@@ -80,7 +80,6 @@ ACEMATEROBOT_CONFIG = ArticulationCfg(
 # Tennis Ball configuration
 ##
 import torch
-import isaaclab.sim as sim_utils
 from isaaclab.assets import RigidObject, RigidObjectCfg
 from isaaclab.sim import SimulationContext, SimulationCfg
 from isaaclab.scene import InteractiveScene, InteractiveSceneCfg
@@ -132,11 +131,11 @@ class TennisBouncingEnvCfg(ReachEnvCfg):
         self.events.reset_robot_joints.params["position_range"] = (-0.5, 0.5)
         
         # override rewards
-        self.rewards.end_effector_position_tracking.params["asset_cfg"].body_names = ["link5"]
-        self.rewards.end_effector_position_tracking_fine_grained.params["asset_cfg"].body_names = ["link5"]
-        self.rewards.end_effector_heading_x_axis_tracking.params["asset_cfg"].body_names = ["link5"]
-        self.rewards.end_effector_heading_x_axis_velocity.params["asset_cfg"].body_names = ["link5"]
-        
+        # self.rewards.end_effector_position_tracking.params["asset_cfg"].body_names = ["link5"]
+        # self.rewards.end_effector_position_tracking_fine_grained.params["asset_cfg"].body_names = ["link5"]
+        # self.rewards.end_effector_heading_x_axis_tracking.params["asset_cfg"].body_names = ["link5"]
+        # self.rewards.end_effector_heading_x_axis_velocity.params["asset_cfg"].body_names = ["link5"]
+        self.rewards.end_ball_position_tracking.params["asset_cfg"].body_names = ["link5"]
         # override actions
         self.actions.arm_action = mdp.JointVelocityActionCfg(
             asset_name="robot", joint_names=["joint1","joint2","joint3","joint4","joint5"], scale=0.5, use_default_offset=True

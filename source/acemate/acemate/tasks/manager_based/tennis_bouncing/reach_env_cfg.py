@@ -33,7 +33,6 @@ import acemate.tasks.manager_based.tennis_bouncing.mdp as mdp
 # Scene definition
 ##
 
-
 @configclass
 class ReachSceneCfg(InteractiveSceneCfg):
     """Configuration for the scene with a robotic arm."""
@@ -44,20 +43,10 @@ class ReachSceneCfg(InteractiveSceneCfg):
         spawn=sim_utils.GroundPlaneCfg(),
         init_state=AssetBaseCfg.InitialStateCfg(pos=(0.0, 0.0, 0.0)),
     )
-
-    # table = AssetBaseCfg(
-    #     prim_path="{ENV_REGEX_NS}/Table",
-    #     spawn=sim_utils.UsdFileCfg(
-    #         usd_path=f"{ISAAC_NUCLEUS_DIR}/Props/Mounts/SeattleLabTable/table_instanceable.usd",
-    #     ),
-    #     init_state=AssetBaseCfg.InitialStateCfg(pos=(0.55, 0.0, 0.0), rot=(0.70711, 0.0, 0.0, 0.70711)),
-    # )
-
     # robots
     robot: ArticulationCfg = MISSING
     # tennis ball
     ball: RigidObjectCfg = MISSING
-
     # lights
     light = AssetBaseCfg(
         prim_path="/World/light",
@@ -69,7 +58,6 @@ class ReachSceneCfg(InteractiveSceneCfg):
 # MDP settings
 ##
 
-
 @configclass
 class CommandsCfg:
     """Command terms for the MDP."""
@@ -80,12 +68,8 @@ class CommandsCfg:
         resampling_time_range=(4.0, 4.0),
         debug_vis=True,
         ranges=mdp.UniformPoseCommandCfg.Ranges(
-            pos_x=(0.0062, 0.0062),
-            pos_y=(-0.4, 0.4),
-            pos_z=(0.3, 0.6),
-            roll=(-1.5708, -1.5708),
-            pitch=(0.0, 0.0),
-            yaw=(3.1415926, 3.1415926),
+            pos_x=(0.0062, 0.0062), pos_y=(-0.4, 0.4), pos_z=(0.3, 0.6),
+            roll=(-1.5708, -1.5708), pitch=(0.0, 0.0), yaw=(3.1415926, 3.1415926),
         ),
     )
 
@@ -109,9 +93,10 @@ class ObservationsCfg:
         # observation terms (order preserved)
         joint_pos = ObsTerm(func=mdp.joint_pos_rel, noise=Unoise(n_min=-0.01, n_max=0.01))
         joint_vel = ObsTerm(func=mdp.joint_vel_rel, noise=Unoise(n_min=-0.01, n_max=0.01))
-        pose_command = ObsTerm(func=mdp.generated_commands, params={"command_name": "ee_pose"})
         actions = ObsTerm(func=mdp.last_action)
-
+        # observation ball
+        ball_pos = ObsTerm(func=mdp.root_pos_w, params={"asset_cfg": SceneEntityCfg("ball")})
+        ball_vel = ObsTerm(func=mdp.root_lin_vel_w, params={"asset_cfg": SceneEntityCfg("ball")})
         def __post_init__(self):
             self.enable_corruption = True
             self.concatenate_terms = True
@@ -132,29 +117,15 @@ class EventCfg:
             "velocity_range": (0.0, 0.0),
         },
     )
-
     reset_ball_position_and_velocity = EventTerm(
             func=mdp.reset_root_state_uniform,
             mode="reset",  # 每次环境重置时触发
             params={
                 "asset_cfg": SceneEntityCfg("ball"), 
-                "pose_range": {
-                    "x": (-3.0, -3.0),
-                    "y": (-0.3, -0.3),
-                    "z": (0.7, 0.8),      
-                    "roll": (0.0, 0.0),
-                    "pitch": (0.0, 0.0),
-                    "yaw": (0.0, 0.0),
-                },
-                "velocity_range": {
-                    "x": (3.0, 5.0),
-                    "y": (0.0, 0.0),
-                    "z": (0.0, 0.0),
-                    "roll": (0.0, 0.0),
-                    "pitch": (0.0, 0.0),
-                    "yaw": (0.0, 0.0),
-                },
-
+                "pose_range": { "x": (-3.0, -3.0), "y": (-0.5, -0.5), "z": (0.7, 0.8),      
+                                "roll": (0.0, 0.0), "pitch": (0.0, 0.0), "yaw": (0.0, 0.0),},
+                "velocity_range": { "x": (3.0, 5.0), "y": (0.0, 0.0), "z": (0.0, 0.0),
+                                    "roll": (0.0, 0.0), "pitch": (0.0, 0.0), "yaw": (0.0, 0.0),},
             },
         )
 
@@ -163,37 +134,40 @@ class RewardsCfg:
     """Reward terms for the MDP."""
 
     # task terms
-    end_effector_position_tracking = RewTerm(
-        func=mdp.position_command_error,
+    end_ball_position_tracking = RewTerm(
+        func=mdp.distance_error
         weight=-0.2,
-        params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "command_name": "ee_pose"},
+        params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING)},
     )
-    end_effector_position_tracking_fine_grained = RewTerm(
-        func=mdp.position_command_error_tanh,
-        weight=0.1,
-        params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "std": 0.1, "command_name": "ee_pose"},
-    )
-    end_effector_heading_x_axis_tracking = RewTerm(
-        func=mdp.heading_x_axis_error,
-        weight=-0.1,
-        params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "command_name": "ee_pose"},
-    )
+
+    # end_effector_position_tracking = RewTerm(
+    #     func=mdp.position_command_error,
+    #     weight=-0.2,
+    #     params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "command_name": "ee_pose"},
+    # )
+    # end_effector_position_tracking_fine_grained = RewTerm(
+    #     func=mdp.position_command_error_tanh,
+    #     weight=0.1,
+    #     params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "std": 0.1, "command_name": "ee_pose"},
+    # )
+    # end_effector_heading_x_axis_tracking = RewTerm(
+    #     func=mdp.heading_x_axis_error,
+    #     weight=-0.1,
+    #     params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "command_name": "ee_pose"},
+    # )
 
     # action penalty
     # When using end effector velocity control, the action_rate_l2 need to be stopped.
-    action_rate = RewTerm(func=mdp.action_rate_l2, weight=-0.0001)
     
-    joint_vel = RewTerm(
-        func=mdp.joint_vel_l2,
-        weight=-0.0001,
-        params={"asset_cfg": SceneEntityCfg("robot")},
-    )
+    # action_rate = RewTerm(func=mdp.action_rate_l2, weight=-0.0001)
 
-    end_effector_heading_x_axis_velocity = RewTerm(
-        func=mdp.x_axis_striking_velocity_reward,
-        weight=-0.1,
-        params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "command_name": "ee_pose"},
-    )
+    joint_vel = RewTerm(func=mdp.joint_vel_l2, weight=-0.0001, params={"asset_cfg": SceneEntityCfg("robot")},)
+
+    # end_effector_heading_x_axis_velocity = RewTerm(
+    #     func=mdp.x_axis_striking_velocity_reward,
+    #     weight=-0.1,
+    #     params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING), "command_name": "ee_pose"},
+    # )
 
 @configclass
 class TerminationsCfg:
