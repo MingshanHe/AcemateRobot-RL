@@ -1,0 +1,1 @@
+./isaaclab.sh -p scripts/tools/convert_urdf.py scripts/acemate/robot_description/urdf/acemate.urdf scripts/acemate/robot_description/usd/acemate.usd --fix-base --merge-joints --joint-target-type velocity
