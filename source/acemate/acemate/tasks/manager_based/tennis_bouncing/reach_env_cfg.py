@@ -136,7 +136,7 @@ class RewardsCfg:
     # task terms
     end_ball_position_tracking = RewTerm(
         func=mdp.distance_error,
-        weight=-0.1,
+        weight=-0.05,
         params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING)},
     )
     hit_ball_reward = RewTerm(
@@ -144,11 +144,11 @@ class RewardsCfg:
         weight=1.0,
         params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING)},
     )
-    hit_ball_velocity_tracking = RewTerm(
-        func=mdp.hit_ball_reward_velocity_tracking,
-        weight=-0.1,
-        params={"target_vel_x": -2.0},
-    )
+    # hit_ball_velocity_tracking = RewTerm(
+    #     func=mdp.hit_ball_reward_velocity_tracking,
+    #     weight=-0.1,
+    #     params={"target_vel_x": -2.0},
+    # )
 
     # end_effector_position_tracking = RewTerm(
     #     func=mdp.position_command_error,
