@@ -139,6 +139,11 @@ class RewardsCfg:
         weight=-0.2,
         params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING)},
     )
+    hit_ball_reward = RewTerm(
+        func=mdp.hit_error,
+        weight=1.0,
+        params={"asset_cfg": SceneEntityCfg("robot", body_names=MISSING)},
+    )
 
     # end_effector_position_tracking = RewTerm(
     #     func=mdp.position_command_error,

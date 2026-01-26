@@ -136,6 +136,7 @@ class TennisBouncingEnvCfg(ReachEnvCfg):
         # self.rewards.end_effector_heading_x_axis_tracking.params["asset_cfg"].body_names = ["link5"]
         # self.rewards.end_effector_heading_x_axis_velocity.params["asset_cfg"].body_names = ["link5"]
         self.rewards.end_ball_position_tracking.params["asset_cfg"].body_names = ["link5"]
+        self.rewards.hit_ball_reward.params["asset_cfg"].body_names = ["link5"] 
         # override actions
         self.actions.arm_action = mdp.JointVelocityActionCfg(
             asset_name="robot", joint_names=["joint1","joint2","joint3","joint4","joint5"], scale=5.0, use_default_offset=True
