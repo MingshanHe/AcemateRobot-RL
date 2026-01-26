@@ -217,7 +217,7 @@ def hit_ball_reward_velocity_tracking(env, target_vel_x=-2.0):
     
     # 计算当前速度与目标的差距
     # 使用平方项可以惩罚较大的偏差
-    error = torch.square(ball_vel_x - target_vel_x)
+    error = ball_vel_x - target_vel_x
     
     # 转换为奖励：偏差越小，奖励越高（最高为0，或者加个偏移量）
     reward = error 
