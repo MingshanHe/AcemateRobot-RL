@@ -128,7 +128,7 @@ class TennisBouncingEnvCfg(ReachEnvCfg):
         # ball.reset()
         
         # override events
-        self.events.reset_robot_joints.params["position_range"] = (1.0, 2.0)
+        self.events.reset_robot_joints.params["position_range"] = (0.0, 0.0)
         
         # override rewards
         # self.rewards.end_effector_position_tracking.params["asset_cfg"].body_names = ["link5"]

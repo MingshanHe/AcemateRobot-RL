@@ -216,23 +216,14 @@ class ReachEnvCfg(ManagerBasedRLEnvCfg):
         self.decimation = 2
         self.sim.render_interval = self.decimation
         self.episode_length_s = 2.0
-        self.viewer.eye = (3.5, 3.5, 3.5)
+        self.viewer.eye = (7, 7, 7)
         # simulation settings
-        self.sim.dt = 1.0 / 60.0
+        self.sim.dt = 1.0 / 120.0
 
         self.teleop_devices = DevicesCfg(
             devices={
-                "keyboard": Se3KeyboardCfg(
-                    gripper_term=False,
-                    sim_device=self.sim.device,
-                ),
-                "gamepad": Se3GamepadCfg(
-                    gripper_term=False,
-                    sim_device=self.sim.device,
-                ),
-                "spacemouse": Se3SpaceMouseCfg(
-                    gripper_term=False,
-                    sim_device=self.sim.device,
-                ),
+                "keyboard": Se3KeyboardCfg(gripper_term=False, sim_device=self.sim.device,),
+                "gamepad": Se3GamepadCfg(gripper_term=False, sim_device=self.sim.device,),
+                "spacemouse": Se3SpaceMouseCfg(gripper_term=False, sim_device=self.sim.device,),
             },
         )

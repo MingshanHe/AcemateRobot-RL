@@ -202,3 +202,10 @@ def distance_error(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg) -> torch.T
     curr_end_pos_w = asset.data.body_pos_w[:, asset_cfg.body_ids[0]]
     curr_ball_pos_w = env.scene["ball"].data.root_pos_w
     return torch.norm(curr_end_pos_w - curr_ball_pos_w, dim=1)
+
+def hit_error(env: ManagerBasedRLEnv, asset_cfg: SceneEntityCfg) -> torch.Tensor:
+    asset: RigidObject = env.scene[asset_cfg.name]
+    curr_ball_vel_w = env.scene["ball"].data.root_lin_vel_w
+    ball_vel_x = curr_ball_vel_w[:, 0]
+    direction_mask = (ball_vel_x < 0).float()
+    return direction_mask
